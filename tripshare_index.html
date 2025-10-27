@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TripShare — Smart Event & Expense Sharing</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #8B5CF6;
+      --primary-light: #A78BFA;
+      --primary-dark: #7C3AED;
+      --accent: #F59E0B;
+      --accent-light: #FBBF24;
+      --muted: #94A3B8;
+      --muted-light: #CBD5E1;
+      --bg: #0F172A;
+      --bg-light: #1E293B;
+      --bg-card: #1E293B;
+      --bg-gradient: linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%);
+      --text: #F1F5F9;
+      --text-light: #CBD5E1;
+      --border: #334155;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --error: #EF4444;
+      --border-radius: 12px;
+      --transition: all 0.3s ease;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0 32px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 24px;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+    }
+
+    h1 {
+      font-size: 28px;
+      margin: 0;
+      background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    p.lead {
+      margin: 6px 0 0;
+      color: var(--muted);
+      max-width: 500px;
+    }
+
+    /* layout */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 24px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border: 1px solid var(--border);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+    }
+
+    /* search */
+    .search-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    input, select, button {
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 15px;
+      transition: var(--transition);
+      flex: 1;
+      min-width: 120px;
+      background: var(--bg-light);
+      color: var(--text);
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 10px rgba(139, 92, 246, 0.4);
+    }
+
+    button.primary:hover {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(139, 92, 246, 0.5);
+    }
+
+    button.pill {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+
+    button.pill:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* event cards */
+    .events {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .event {
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: var(--transition);
+      background: var(--bg-card);
+    }
+
+    .event:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .event img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .event .meta {
+      padding: 16px;
+    }
+
+    .event h3 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .meta .small {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .event .price {
+      margin-top: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--accent);
+    }
+
+    .event .actions {
+      display: flex;
+      gap: 10px;
+      padding: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* bookings */
+    .book-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .booking {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px dashed var(--border);
+      transition: var(--transition);
+    }
+
+    .booking:hover {
+      border-color: var(--primary-light);
+      background: rgba(139, 92, 246, 0.05);
+    }
+
+    /* modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      max-width: 720px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      animation: modalFadeIn 0.3s ease;
+      border: 1px solid var(--border);
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* responsive */
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .logo {
+        width: 50px;
+        height: 50px;
+      }
+      
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      
+      .search-row {
+        flex-direction: column;
+      }
+    }
+
+    footer {
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--bg-light);
+      font-weight: 600;
+      font-size: 13px;
+      gap: 4px;
+      color: var(--text);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .currency {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .section-title {
+      font-size: 20px;
+      margin-bottom: 16px;
+      color: var(--text);
+      position: relative;
+      padding-bottom: 8px;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 40px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 2px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .tag.movie {
+      background: rgba(139, 92, 246, 0.2);
+      color: var(--primary-light);
+    }
+
+    .tag.concert {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--accent-light);
+    }
+
+    .tag.sports {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10B981;
+    }
+
+    .tag.theatre {
+      background: rgba(236, 72, 153, 0.2);
+      color: #EC4899;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .match-card {
+      padding: 16px;
+      border-radius: 10px;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      margin-bottom: 12px;
+    }
+
+    .expense-input {
+      margin-bottom: 16px;
+    }
+
+    .expense-input label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: var(--muted-light);
+    }
+
+    .expense-input input {
+      width: 100%;
+    }
+
+    .stats {
+      display: flex;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .stat-card {
+      flex: 1;
+      background: var(--bg-light);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(245, 158, 11, 0.1));
+      border-radius: var(--border-radius);
+      padding: 30px;
+      margin-bottom: 24px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .hero h2 {
+      font-size: 32px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      color: var(--muted-light);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .currency-symbol {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Authentication Pages */
+    .auth-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: var(--bg-gradient);
+    }
+
+    .auth-card {
+      background: var(--bg-card);
+      padding: 40px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      width: 400px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .auth-card h2 {
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .auth-card input {
+      width: 100%;
+      padding: 12px 16px;
+      margin: 10px 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-light);
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .auth-card input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+    }
+
+    .auth-card button {
+      width: 100%;
+      margin-top: 16px;
+    }
+
+    .auth-link {
+      margin-top: 20px;
+      color: var(--muted);
+    }
+
+    .auth-link a {
+      color: var(--primary-light);
+      text-decoration: none;
+    }
+
+    .auth-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- Authentication Screens -->
+  <div id="authContainer" class="auth-container">
+    <!-- Signup Screen -->
+    <div id="signupScreen" class="auth-card">
+      <div class="logo" style="margin: 0 auto 20px;">
+        RT
+      </div>
+      <h2>Create Account</h2>
+      <form id="signupForm">
+        <input type="text" id="name" placeholder="Enter Name" required />
+        <input type="email" id="email" placeholder="Enter Email" required />
+        <input type="password" id="password" placeholder="Enter Password" required minlength="5" />
+        <input type="text" id="city" placeholder="Enter Your City" required />
+        <button type="submit" class="primary">Sign Up</button>
+      </form>
+      <div class="auth-link">
+        Already have an account? <a href="#" id="loginLink">Login</a>
+      </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="auth-card" style="display: none;">
+      <div class="logo" style="margin: 0 auto 20px;">
+        RT
+      </div>
+      <h2>Login</h2>
+      <form id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Enter Email" required />
+        <input type="password" id="loginPassword" placeholder="Enter Password" required />
+        <button type="submit" class="primary">Login</button>
+      </form>
+      <div class="auth-link">
+        Don't have an account? <a href="#" id="signupLink">Sign Up</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Application (Hidden Initially) -->
+  <div id="mainApp" style="display: none;">
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">
+            RT
+          </div>
+          <div>
+            <h1>TripShare India</h1>
+            <p class="lead">Connect with fellow Indians going to the same events and split costs — travel, stay, food.</p>
+          </div>
+        </div>
+        <div class="user-info">
+          <span id="loggedAs" class="muted">Not signed in</span>
+          <button id="btnSign" class="pill">
+            <i class="fas fa-user"></i>
+            Sign in / Register
+          </button>
+        </div>
+      </header>
+
+      <div class="hero">
+        <h2>Travel Smart, Save Together</h2>
+        <p>Find people attending the same events across India and split expenses to make your trips more affordable and enjoyable.</p>
+      </div>
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-value">2,500+</div>
+          <div class="stat-label">Events Listed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">₹12.5L+</div>
+          <div class="stat-label">Saved by Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">15,000+</div>
+          <div class="stat-label">Happy Travelers</div>
+        </div>
+      </div>
+      <main class="grid">
+        <section>
+          <div class="card">
+            <h2 class="section-title">Discover Indian Events</h2>
+            <div class="search-row">
+              <input id="cityInput" placeholder="Enter Indian city (e.g. Mumbai, Delhi)" />
+              <input id="dateInput" type="date" />
+              <select id="categorySelect">
+                <option value="">All Categories</option>
+                <option value="movie">Bollywood Movies</option>
+                <option value="concert">Concerts</option>
+                <option value="sports">Sports</option>
+                <option value="theatre">Theatre</option>
+                <option value="festival">Festivals</option>
+              </select>
+              <button id="btnSearch" class="primary">
+                <i class="fas fa-search"></i>
+                Search
+              </button>
+            </div>
+            <div id="events" class="events"></div>
+          </div>
+          <div class="card" style="margin-top:20px">
+            <h3 class="section-title">Your Bookings</h3>
+            <div id="bookings" class="book-list">
+              <!-- bookings injected here -->
+            </div>
+          </div>
+        </section>
+        <aside>
+          <div class="card">
+            <h3 class="section-title">Matches Near You</h3>
+            <div id="matches" style="min-height:90px;color:var(--muted)">No matches yet — book an event to find people.</div>
+          </div>
+          <div class="card" style="margin-top:20px">
+            <h3 class="section-title">Expense Splitter</h3>
+            <div>
+              <div class="expense-input">
+                <label><i class="fas fa-hotel"></i> Total Hotel</label>
+                <input id="hotelCost" placeholder="Hotel total (₹)" />
+              </div>
+              <div class="expense-input">
+                <label><i class="fas fa-utensils"></i> Total Food</label>
+                <input id="foodCost" placeholder="Food total (₹)" />
+              </div>
+              <div class="expense-input">
+                <label><i class="fas fa-car"></i> Transport</label>
+                <input id="travelCost" placeholder="Transport total (₹)" />
+              </div>
+              <div class="expense-input">
+                <label><i class="fas fa-users"></i> Number of People</label>
+                <input id="peopleCount" placeholder="2" />
+              </div>
+              <button id="btnSplit" class="primary" style="margin-top:10px; width:100%">
+                <i class="fas fa-calculator"></i>
+                Calculate Split
+              </button>
+              <div id="splitResult" style="margin-top:16px;color:var(--text); text-align:center; font-weight:600"></div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:20px">
+            <h3 class="section-title">Travel Tips</h3>
+            <ul style="color:var(--muted-light);padding-left:20px;margin:12px 0 0">
+              <li style="margin-bottom:8px">Use clear profile info for easy matches.</li>
+              <li style="margin-bottom:8px">Prefer verified contacts when meeting strangers.</li>
+              <li>Always double-check costs before confirming split.</li>
+            </ul>
+          </div>
+        </aside>
+      </main>
+      <footer>
+        <p>Made with ❤️ for Indian travelers. Images are for representation purposes only.</p>
+        <p class="muted" style="margin-top:8px;font-size:12px">TripShare India &copy; 2023 - Connecting travelers across the nation</p>
+      </footer>
+    </div>
+    <!-- Modal area -->
+    <div id="modalRoot" class="modal-backdrop">
+      <div class="modal" role="dialog" aria-modal="true">
+        <div id="modalContent"></div>
+        <div style="text-align:right;margin-top:20px">
+          <button id="modalClose" class="pill">
+            <i class="fas fa-times"></i>
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // --------- SAMPLE EVENT DATA (Indian events) ----------
+    const SAMPLE_EVENTS = [
+      {id:1,title:'RRR - The Epic Drama',city:'Mumbai',date:'2025-10-20',time:'19:30',price:250,category:'movie',img:'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?auto=format&fit=crop&w=1600&q=80'},
+      {id:2,title:'Arijit Singh Live Concert',city:'Delhi',date:'2025-10-20',time:'20:00',price:1800,category:'concert',img:'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1600&q=80'},
+      {id:3,title:'IPL Cricket Match - Mumbai Indians vs CSK',city:'Mumbai',date:'2025-10-20',time:'17:00',price:1500,category:'sports',img:'https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&w=1600&q=80'},
+      {id:4,title:'Traditional Kathakali Performance',city:'Kochi',date:'2025-10-21',time:'18:00',price:350,category:'theatre',img:'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1600&q=80'},
+      {id:5,title:'Diljit Dosanjh Live Concert',city:'Mumbai',date:'2025-10-21',time:'21:00',price:600,category:'concert',img:'https://images.unsplash.com/photo-1571330735066-03aaa9429d89?auto=format&fit=crop&w=1600&q=80'},
+      {id:6,title:'Diwali Festival Celebration',city:'Jaipur',date:'2025-11-12',time:'19:00',price:0,category:'festival',img:'https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?auto=format&fit=crop&w=1600&q=80'},
+      {id:7,title:'Street Food Tour - Old Delhi',city:'Delhi',date:'2025-10-25',time:'10:00',price:500,category:'festival',img:'https://images.unsplash.com/photo-1565299585323-38174c13fae8?auto=format&fit=crop&w=1600&q=80'},
+      {id:8,title:'Yoga Retreat - Rishikesh',city:'Rishikesh',date:'2025-11-05',time:'06:00',price:1200,category:'sports',img:'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80'}
+    ];
+    // ---------- Authentication Logic ----------
+    const authContainer = document.getElementById('authContainer');
+    const signupScreen = document.getElementById('signupScreen');
+    const loginScreen = document.getElementById('loginScreen');
+    const mainApp = document.getElementById('mainApp');
+    const signupForm = document.getElementById('signupForm');
+    const loginForm = document.getElementById('loginForm');
+    const loginLink = document.getElementById('loginLink');
+    const signupLink = document.getElementById('signupLink');
+    function checkAuthStatus() {
+      const currentUser = getCurrent();
+      if (currentUser) {
+        showMainApp();
+      }
+    }
+    function showSignup() {
+      signupScreen.style.display = 'block';
+      loginScreen.style.display = 'none';
+    }
+    function showLogin() {
+      signupScreen.style.display = 'none';
+      loginScreen.style.display = 'block';
+    }
+
+    // Show main application
+    function showMainApp() {
+      authContainer.style.display = 'none';
+      mainApp.style.display = 'block';
+      renderHeader();
+      renderEvents(SAMPLE_EVENTS);
+      renderBookings();
+      findMatches();
+    }
+
+    // Signup form submission
+    signupForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const city = document.getElementById('city').value;
+      
+      if (!email.includes('@')) {
+        alert('Email must contain @');
+        return;
+      }
+      
+      // Save user data
+      const users = getUsers();
+      users.push({id: Date.now(), name, email, password, city});
+      saveUsers(users);
+      
+      alert('Account created successfully! Please login.');
+      showLogin();
+    });
+
+    // Login form submission
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      
+      const users = getUsers();
+      const user = users.find(u => u.email === email && u.password === password);
+      
+      if (user) {
+        setCurrent(user);
+        showMainApp();
+      } else {
+        alert('Invalid credentials!');
+      }
+    });
+
+    // Switch between signup and login
+    loginLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      showLogin();
+    });
+    
+    signupLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      showSignup();
+    });
+
+    // ---------- Utilities ----------
+    const $ = (id)=>document.getElementById(id);
+    const modalRoot = $('modalRoot');
+    const modalContent = $('modalContent');
+
+    function openModal(html){ modalContent.innerHTML = html; modalRoot.style.display='flex'; }
+    function closeModal(){ modalRoot.style.display='none'; modalContent.innerHTML=''; }
+    $('modalClose').addEventListener('click', closeModal);
+
+    // ---------- Auth (simple localStorage) ----------
+    function getUsers(){ return JSON.parse(localStorage.getItem('ts_users')||'[]'); }
+    function saveUsers(u){ localStorage.setItem('ts_users', JSON.stringify(u)); }
+    function getCurrent(){ return JSON.parse(localStorage.getItem('ts_current')||'null'); }
+    function setCurrent(u){ localStorage.setItem('ts_current', JSON.stringify(u)); renderHeader(); renderBookings(); findMatches(); }
+
+    function renderHeader(){ 
+      const cur = getCurrent(); 
+      $('loggedAs').textContent = cur ? ('Signed in as ' + cur.name + ' ('+cur.city+')') : 'Not signed in'; 
+      $('btnSign').innerHTML = cur ? '<i class="fas fa-sign-out-alt"></i> Sign out' : '<i class="fas fa-user"></i> Sign in / Register'; 
+    }
+
+    $('btnSign').addEventListener('click', ()=>{
+      const cur = getCurrent();
+      if(cur){ 
+        if(confirm('Sign out?')){ 
+          localStorage.removeItem('ts_current'); 
+          authContainer.style.display = 'flex';
+          mainApp.style.display = 'none';
+          showLogin();
+        } 
+        return; 
+      }
+      
+      openModal(`<h3 style="margin-bottom:8px">Sign in / Register</h3>
+        <p style="color:var(--muted); margin-bottom:16px">Enter your name & city</p>
+        <div class="expense-input">
+          <label>Your Name</label>
+          <input id='regName' placeholder='Your name' />
+        </div>
+        <div class="expense-input">
+          <label>Your City</label>
+          <input id='regCity' placeholder='City' />
+        </div>
+        <div style='display:flex;gap:10px;margin-top:20px'>
+          <button id='doRegister' class='primary' style="flex:1">Register</button>
+          <button id='doLogin' class='pill' style="flex:1">Login</button>
+        </div>
+      `);
+      
+      setTimeout(()=>{
+        $('doRegister').addEventListener('click', ()=>{
+          const name = $('regName').value.trim(); 
+          const city = $('regCity').value.trim();
+          if(!name||!city){ alert('Enter name and city'); return; }
+          const users = getUsers(); 
+          users.push({id:Date.now(),name,city}); 
+          saveUsers(users); 
+          setCurrent({id:users[users.length-1].id,name,city}); 
+          closeModal();
+        });
+        
+        $('doLogin').addEventListener('click', ()=>{
+          const name = $('regName').value.trim(); 
+          const city = $('regCity').value.trim();
+          const users = getUsers(); 
+          const found = users.find(u=>u.name===name && u.city===city);
+          if(!found){ alert('User not found. Register first.'); return; }
+          setCurrent(found); 
+          closeModal();
+        });
+      },50);
+    });
+
+    // ---------- Events rendering & search ----------
+    function renderEvents(list){ 
+      const el = $('events'); 
+      el.innerHTML='';
+      
+      if (list.length === 0) {
+        el.innerHTML = '<div style="text-align:center; padding:40px; color:var(--muted)">No events found matching your criteria</div>';
+        return;
+      }
+      
+      list.forEach(ev=>{
+        const card = document.createElement('div'); 
+        card.className='event card';
+        card.innerHTML = `
+          <img src='${ev.img}' alt='${ev.title}' loading='lazy'/>
+          <div class='meta'>
+            <span class='tag ${ev.category}'>${ev.category.charAt(0).toUpperCase() + ev.category.slice(1)}</span>
+            <h3>${ev.title}</h3>
+            <div class='small'><i class="fas fa-map-marker-alt"></i> ${ev.city} • <i class="far fa-calendar"></i> ${formatDate(ev.date)} • <i class="far fa-clock"></i> ${ev.time}</div>
+            <div class='price'><span class="currency-symbol">₹</span> ${ev.price} ${ev.price === 0 ? '(Free)' : ''}</div>
+          </div>
+          <div class='actions'>
+            <button onclick='openBooking(${ev.id})' class='primary'><i class="fas fa-ticket-alt"></i> Book</button>
+            <button onclick='viewDetails(${ev.id})' class='pill'><i class="fas fa-info-circle"></i> Details</button>
+          </div>
+        `;
+        el.appendChild(card);
+      });
+    }
+
+    function formatDate(dateString) {
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return new Date(dateString).toLocaleDateString('en-IN', options);
+    }
+
+    function viewDetails(id){ 
+      const ev = SAMPLE_EVENTS.find(e=>e.id===id); 
+      openModal(`
+        <h3 style="margin-bottom:12px">${ev.title}</h3>
+        <span class='tag ${ev.category}'>${ev.category.charAt(0).toUpperCase() + ev.category.slice(1)}</span>
+        <img src='${ev.img}' alt='' style='width:100%;height:220px;object-fit:cover;border-radius:8px; margin:12px 0'/>
+        <p style='margin-bottom:8px;color:var(--muted)'><i class="fas fa-map-marker-alt"></i> ${ev.city} • <i class="far fa-calendar"></i> ${formatDate(ev.date)} • <i class="far fa-clock"></i> ${ev.time}</p>
+        <p class='price' style='font-size:20px; margin-bottom:12px'><span class="currency-symbol">₹</span>${ev.price} ${ev.price === 0 ? '(Free)' : ''}</p>
+        <p class='muted'>Category: ${ev.category}</p>
+        <div style='margin-top:20px'>
+          <button class='primary' onclick='openBooking(${ev.id})'><i class="fas fa-ticket-alt"></i> Book Now</button>
+        </div>
+      `); 
+    }
+
+    function openBooking(id){ 
+      const ev = SAMPLE_EVENTS.find(e=>e.id===id);
+      const cur = getCurrent(); 
+      if(!cur){ 
+        alert('Sign in first to book'); 
+        return; 
+      }
+      
+      openModal(`
+        <h3 style="margin-bottom:12px">Book: ${ev.title}</h3>
+        <div style='display:flex;gap:12px;align-items:center; margin-bottom:16px'>
+          <img src='${ev.img}' style='width:110px;height:70px;object-fit:cover;border-radius:8px'/>
+          <div style='flex:1'>
+            <p style='margin:0;font-weight:600'><i class="fas fa-map-marker-alt"></i> ${ev.city} • <i class="far fa-calendar"></i> ${formatDate(ev.date)} • <i class="far fa-clock"></i> ${ev.time}</p>
+            <p class='price' style='margin:6px 0 0'><span class="currency-symbol">₹</span>${ev.price}</p>
+          </div>
+        </div>
+        <div class="expense-input">
+          <label>Number of Tickets</label>
+          <input id='ticketCount' type='number' min='1' value='1' />
+        </div>
+        <div style='margin-top:20px'>
+          <button id='confirmBook' class='primary' style="width:100%"><i class="fas fa-check-circle"></i> Confirm Booking</button>
+        </div>
+      `);
+      
+      setTimeout(()=>{
+        $('confirmBook').addEventListener('click', ()=>{
+          const qty = parseInt($('ticketCount').value||1,10); 
+          const booking = {
+            id: Date.now(),
+            eventId: ev.id, 
+            userId: getCurrent().id, 
+            userName: getCurrent().name, 
+            city: getCurrent().city, 
+            date: ev.date, 
+            title: ev.title, 
+            price: ev.price, 
+            qty
+          };
+          
+          const all = JSON.parse(localStorage.getItem('ts_bookings')||'[]'); 
+          all.push(booking); 
+          localStorage.setItem('ts_bookings', JSON.stringify(all)); 
+          closeModal(); 
+          renderBookings(); 
+          findMatches(); 
+          alert('Booked successfully!');
+        });
+      },50);
+    }
+
+    // ---------- Bookings render ----------
+    function renderBookings(){ 
+      const list = JSON.parse(localStorage.getItem('ts_bookings')||'[]'); 
+      const cur = getCurrent(); 
+      const el = $('bookings'); 
+      el.innerHTML='';
+      
+      if(!cur){ 
+        el.innerHTML='<div class="muted" style="text-align:center; padding:20px"><i class="fas fa-info-circle"></i> Sign in and book events to see your bookings here.</div>'; 
+        return; 
+      }
+      
+      const mine = list.filter(b=>b.userId===cur.id);
+      if(!mine.length){ 
+        el.innerHTML='<div class="muted" style="text-align:center; padding:20px"><i class="fas fa-ticket-alt"></i> No bookings yet. Book an event to get started.</div>'; 
+        return; 
+      }
+      
+      mine.forEach(b=>{
+        const node = document.createElement('div'); 
+        node.className='booking';
+        node.innerHTML = `
+          <div>
+            <strong>${b.title}</strong>
+            <div class='muted' style='font-size:14px; margin-top:4px'><i class="fas fa-map-marker-alt"></i> ${b.city} • <i class="far fa-calendar"></i> ${formatDate(b.date)} • ${b.qty} ticket(s)</div>
+            <div class='price' style='font-size:16px; margin-top:4px'><span class="currency-symbol">₹</span>${b.price * b.qty}</div>
+          </div>
+          <div style='display:flex;gap:8px'>
+            <button class='pill' onclick='openMatch(${b.id})'><i class="fas fa-users"></i> Find Matches</button>
+            <button class='pill' onclick='removeBooking(${b.id})'><i class="fas fa-times"></i> Cancel</button>
+          </div>`;
+        el.appendChild(node);
+      });
+    }
+
+    function removeBooking(id){ 
+      if(!confirm('Cancel booking?')) return; 
+      const all = JSON.parse(localStorage.getItem('ts_bookings')||'[]'); 
+      const next = all.filter(b=>b.id!==id); 
+      localStorage.setItem('ts_bookings', JSON.stringify(next)); 
+      renderBookings(); 
+      findMatches(); 
+    }
+
+    // ---------- Matching logic ----------
+    function findMatches(){ 
+      const all = JSON.parse(localStorage.getItem('ts_bookings')||'[]'); 
+      const cur = getCurrent(); 
+      const out = $('matches'); 
+      out.innerHTML='';
+      
+      if(!cur){ 
+        out.innerHTML='<div style="text-align:center; padding:20px"><i class="fas fa-info-circle"></i> Sign in and book events to find matches.</div>'; 
+        return; 
+      }
+      
+      // find bookings where city & date & event title match but userId != current
+      const mine = all.filter(b=>b.userId===cur.id);
+      const matches = [];
+      mine.forEach(my=>{
+        const same = all.filter(o=>o.userId!==cur.id && o.city===my.city && o.date===my.date && o.title===my.title);
+        same.forEach(s=>{
+          matches.push({myBooking:my, other:s});
+        });
+      });
+      
+      if(!matches.length){ 
+        out.innerHTML='<div style="text-align:center; padding:20px"><i class="fas fa-users"></i> No matches found yet. Ask friends to book or wait for others.</div>'; 
+        return; 
+      }
+      
+      // render matches
+      matches.forEach(m=>{
+        const div = document.createElement('div'); 
+        div.className = 'match-card';
+        div.innerHTML = `
+          <div style='display:flex;justify-content:space-between;align-items:center'>
+            <div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px">
+                <div class="user-avatar">${m.other.userName.charAt(0).toUpperCase()}</div>
+                <strong>${m.other.userName}</strong>
+              </div>
+              <div class="muted" style="font-size:14px">Going to <strong>${m.myBooking.title}</strong> on ${formatDate(m.myBooking.date)}</div>
+            </div>
+            <div>
+              <button class='primary' onclick='openShare(${m.myBooking.id},${m.other.id})'>Connect</button>
+            </div>
+          </div>`;
+        out.appendChild(div);
+      });
+    }
+
+    function openMatch(bookingId){ 
+      const all = JSON.parse(localStorage.getItem('ts_bookings')||'[]'); 
+      const b = all.find(x=>x.id===bookingId); 
+      const cur = getCurrent(); 
+      const others = all.filter(o=>o.userId!==cur.id && o.city===b.city && o.date===b.date && o.title===b.title);
+      
+      if(!others.length){ 
+        alert('No matches found for this booking.'); 
+        return; 
+      }
+      
+      let html = `<h3 style="margin-bottom:16px">Matches for ${b.title} — ${formatDate(b.date)}</h3>`;
+      others.forEach(o=>{
+        html += `
+          <div style='display:flex;gap:12px;align-items:center;padding:12px;border-top:1px solid var(--border)'>
+            <div class="user-avatar">${o.userName.charAt(0).toUpperCase()}</div>
+            <div style='flex:1'>
+              <strong>${o.userName}</strong>
+              <div class='muted' style="font-size:14px">Tickets: ${o.qty}</div>
+            </div>
+            <div>
+              <button class='pill' onclick='openShare(${b.id},${o.id})'>Connect & Split</button>
+            </div>
+          </div>`;
+      });
+      openModal(html);
+    }
+    function openShare(myBookingId, otherBookingId){ 
+      const all = JSON.parse(localStorage.getItem('ts_bookings')||'[]'); 
+      const A = all.find(x=>x.id===myBookingId); 
+      const B = all.find(x=>x.id===otherBookingId);
+      
+      openModal(`
+        <h3 style="margin-bottom:12px">Plan & Share Costs</h3>
+        <p class='muted' style="margin-bottom:16px">
+          You: <strong>${A.userName}</strong> &nbsp; With: <strong>${B.userName}</strong>
+        </p>
+        <div class="expense-input">
+          <label><i class="fas fa-hotel"></i> Hotel total (₹)</label>
+          <input id='modalHotel' placeholder="Enter amount" />
+        </div>
+        <div class="expense-input">
+          <label><i class="fas fa-utensils"></i> Food total (₹)</label>
+          <input id='modalFood' placeholder="Enter amount" />
+        </div>
+        <div class="expense-input">
+          <label><i class="fas fa-car"></i> Transport total (₹)</label>
+          <input id='modalTravel' placeholder="Enter amount" />
+        </div>
+        <div class="expense-input">
+          <label><i class="fas fa-users"></i> Number of people</label>
+          <input id='modalPeople' value='2' />
+        </div>
+        <div style='margin-top:20px'>
+          <button id='doSplit' class='primary' style="width:100%"><i class="fas fa-calculator"></i> Calculate & Share</button>
+        </div>
+        <div id='modalSplit' style='margin-top:16px; text-align:center; font-weight:600'></div>
+        <div style='margin-top:20px; text-align:center'>
+          <button class='pill' onclick='contactUser(${B.userId},"${B.userName}")'>
+            <i class="fas fa-envelope"></i> Contact ${B.userName}
+          </button>
+        </div>
+      `);
+      
+      setTimeout(()=>{
+        $('doSplit').addEventListener('click', ()=>{
+          const h = parseFloat($('modalHotel').value||0);
+          const f = parseFloat($('modalFood').value||0);
+          const t = parseFloat($('modalTravel').value||0);
+          const p = parseInt($('modalPeople').value||2,10);
+          const total = (h||0)+(f||0)+(t||0);
+          const per = (p>0)?(total/p):total;
+          $('modalSplit').innerHTML = `Total: <span class="currency-symbol">₹</span>${total.toFixed(2)} • Each Pays: <span class="currency-symbol">₹</span>${per.toFixed(2)}`;
+        });
+      },50);
+    }
+
+    function contactUser(userId, userName){ // a simple mailto/contact link simulation
+      const cur = getCurrent(); const link = `mailto:example@example.com?subject=TripShare%20Plan%20with%20${encodeURIComponent(userName)}&body=Hi%20${encodeURIComponent(userName)}%2C%0A%0AI%20am%20${encodeURIComponent(cur.name)}%20from%20${encodeURIComponent(cur.city)}.%20I%20saw%20you%20are%20going%20to%20the%20same%20event.%20Let's%20plan%20together.`;
+      window.location.href = link;
+    }
+
+    $('btnSearch').addEventListener('click', ()=>{
+      const city = $('cityInput').value.trim(); const date = $('dateInput').value; const cat = $('categorySelect').value;
+      let res = SAMPLE_EVENTS.slice();
+      if(city) res = res.filter(r=>r.city.toLowerCase().includes(city.toLowerCase()));
+      if(date) res = res.filter(r=>r.date===date);
+      if(cat) res = res.filter(r=>r.category===cat);
+      renderEvents(res);
+    });
+
+    $('btnSplit').addEventListener('click', ()=>{
+      const h = parseFloat($('hotelCost').value||0);
+      const f = parseFloat($('foodCost').value||0);
+      const t = parseFloat($('travelCost').value||0);
+      const p = parseInt($('peopleCount').value||1,10);
+      const total = (h||0)+(f||0)+(t||0);
+      if(!p || p<=0){ $('splitResult').textContent='Enter valid number of people'; return; }
+      $('splitResult').innerHTML = `Total: <span class="currency-symbol">₹</span>${total.toFixed(2)} — Each Pays: <span class="currency-symbol">₹</span>${(total/p).toFixed(2)}`;
+    });
+
+    
+    (function init(){ 
+      checkAuthStatus();
+      // If not logged in, show signup screen
+      if (!getCurrent()) {
+        showSignup();
+      }
+    })();
+
+    // Close modal on backdrop click
+    modalRoot.addEventListener('click', (e)=>{ if(e.target===modalRoot) closeModal(); });
+  </script>
+</body>
+</html>
